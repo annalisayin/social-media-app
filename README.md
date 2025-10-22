@@ -1,40 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Social Web App
 
-## Getting Started
+## My Approach & Design Decisions
 
-First, run the development server:
+### **1. Backend-first mindset (API as a clean data layer)**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Even though everything runs in one Next.js project, I designed the `/api/users` route to act like a standalone backend service.
+It fetches data from the **Random User API**, shapes it into a cleaner format, and returns just what the frontend needs.
+This separation makes testing and iteration easier.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+### **2. Using cache to store users **
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+One of the first problems I noticed: every time I refreshed or navigated around, the app would re-fetch all user data.
+That meant unnecessary network calls and slower perceived performance, the main user profile would constantly change each time as well.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+I decided to introduce a simple **in-memory cache** (a global variable that stores fetched users temporarily).
+Since frequent API calls slow down UX and students browsing profiles shouldn’t have to wait for another fetch if they’ve already seen the same data we can cache the fetched users in memory. We can avoid redundant API calls and avoid hitting rate limits.
+Now the app only calls the Random User API the first time it’s needed. After that, it serves cached data until a refresh or revalidation event.
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Trade-off: The cache resets on server restart or refresh (since it’s in-memory). For a real production app, I’d use persistent or distributed caching (like Redis or localStorage).
 
-## Learn More
+### **3. Component-first UI structure**
 
-To learn more about Next.js, take a look at the following resources:
+The UI is broken into modular pieces, the `ProfileCard` displays individual users and can be reused anywhere.
+This keeps the layout consistent and makes it easy to scale the design later.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+Each card receives a single `user` object prop, this made testing straightforward and avoided unnecessary state complexity.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### **4. Fetching data efficiently on the frontend**
 
-## Deploy on Vercel
+The frontend calls `/api/users` once when the Discover page loads.
+If cached data already exists, it just reuses that, so the UI feels instant even when navigating back and forth.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+## What I’d Do Next
+
+If I had more time:
+
+* Implement **search, filters, and pagination**
+* Style with Tailwind for a cleaner, modern student-facing look
+* Add integration tests for end-to-end flow

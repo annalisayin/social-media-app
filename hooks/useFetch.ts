@@ -1,5 +1,4 @@
-// hooks/useFetch.ts
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 export function useFetch<T = any>(url: string) {
   const [data, setData] = useState<T | null>(null);
@@ -10,14 +9,16 @@ export function useFetch<T = any>(url: string) {
     let mounted = true;
     setLoading(true);
     fetch(url)
-      .then(res => {
-        if (!res.ok) throw new Error('Network error');
+      .then((res) => {
+        if (!res.ok) throw new Error("Network error");
         return res.json();
       })
-      .then(json => mounted && setData(json))
-      .catch(e => mounted && setError(String(e)))
+      .then((json) => mounted && setData(json))
+      .catch((e) => mounted && setError(String(e)))
       .finally(() => mounted && setLoading(false));
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, [url]);
 
   return { data, loading, error };
