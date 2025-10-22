@@ -40,3 +40,16 @@ If I had more time:
 * Implement **search, filters, and pagination**
 * Style with Tailwind for a cleaner, modern student-facing look
 * Add integration tests for end-to-end flow
+
+
+## How to run
+Install dependencies:
+npm install
+
+Run the development server:
+npm run dev
+
+Then visit http://localhost:3000.
+
+Run tests:
+npm test
