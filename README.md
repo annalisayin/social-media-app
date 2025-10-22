@@ -2,7 +2,7 @@
 
 ## My Approach & Design Decisions
 
-### **1. Backend-first mindset (API as a clean data layer)**
+### **1. Backend **
 
 Even though everything runs in one Next.js project, I designed the `/api/users` route to act like a standalone backend service.
 It fetches data from the **Random User API**, shapes it into a cleaner format, and returns just what the frontend needs.
@@ -20,7 +20,7 @@ Now the app only calls the Random User API the first time it’s needed. After t
 
 Trade-off: The cache resets on server restart or refresh (since it’s in-memory). For a real production app, I’d use persistent or distributed caching (like Redis or localStorage).
 
-### **3. Component-first UI structure**
+### **3. Component UI structure**
 
 The UI is broken into modular pieces, the `ProfileCard` displays individual users and can be reused anywhere.
 This keeps the layout consistent and makes it easy to scale the design later.
